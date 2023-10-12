@@ -947,6 +947,7 @@ static int smblib_get_pulse_cnt(struct smb_charger *chg, int *count)
 #define USBIN_150MA	150000
 #define USBIN_500MA	500000
 #define USBIN_900MA	900000
+#define USBIN_2700MA	2700000
 
 static int set_sdp_current(struct smb_charger *chg, int icl_ua)
 {
@@ -957,7 +958,7 @@ static int set_sdp_current(struct smb_charger *chg, int icl_ua)
 #ifdef CONFIG_FORCE_FAST_CHARGE
 	if (force_fast_charge > 0 && icl_ua == USBIN_500MA)
 	{
-		icl_ua = USBIN_900MA;
+		icl_ua = USBIN_2700MA;
 	}
 #endif
 
@@ -975,7 +976,7 @@ static int set_sdp_current(struct smb_charger *chg, int icl_ua)
 		/* USB 2.0 500mA */
 		icl_options = USB51_MODE_BIT;
 		break;
-	case USBIN_900MA:
+	case USBIN_2700MA:
 		/* USB 3.0 900mA */
 		icl_options = CFG_USB3P0_SEL_BIT | USB51_MODE_BIT;
 		break;
@@ -1023,7 +1024,7 @@ static int get_sdp_current(struct smb_charger *chg, int *icl_ua)
 	usb3 = (icl_options & CFG_USB3P0_SEL_BIT);
 
 	if (icl_options & USB51_MODE_BIT)
-		*icl_ua = usb3 ? USBIN_900MA : USBIN_500MA;
+		*icl_ua = usb3 ? USBIN_2700MA : USBIN_500MA;
 	else
 		*icl_ua = usb3 ? USBIN_150MA : USBIN_100MA;
 
@@ -1056,7 +1057,7 @@ int smblib_set_icl_current(struct smb_charger *chg, int icl_ua)
 		 * current limit is 500mA or below for better accuracy; in case
 		 * of error, proceed to use USB high-current mode.
 		 */
-		if (icl_ua <= USBIN_900MA) {
+		if (icl_ua <= USBIN_2700MA) {
 			rc = set_sdp_current(chg, icl_ua);
 			if (rc >= 0)
 				goto enable_icl_changed_interrupt;
@@ -1074,13 +1075,13 @@ override_suspend_config:
 	override = true;
 	if (icl_ua == INT_MAX) {
 		/* remove override if no voters - hw defaults is desired */
-		override = false;
+		override = true;
 	} else if (chg->typec_mode == POWER_SUPPLY_TYPEC_SOURCE_DEFAULT) {
 		if (chg->real_charger_type == POWER_SUPPLY_TYPE_USB)
 			/* For std cable with type = SDP never override */
-			override = false;
+			override = true;
 		else if (chg->real_charger_type == POWER_SUPPLY_TYPE_USB_CDP
-			&& icl_ua == 1500000)
+			&& icl_ua == 2700000)
 			/*
 			 * For std cable with type = CDP override only if
 			 * current is not 1500mA
@@ -4159,18 +4160,18 @@ void asus_insertion_initial_settings(struct smb_charger *chg)
 		dev_err(chg->dev, "Couldn't set default PRE_CHARGE_CURRENT_CFG_REG rc=%d\n",
 			rc);
 
-	rc = smblib_write(chg, FAST_CHARGE_CURRENT_CFG_REG, 0x28);
+	rc = smblib_write(chg, FAST_CHARGE_CURRENT_CFG_REG, 0x72);
 	if (rc < 0)
 		dev_err(chg->dev, "Couldn't set default FAST_CHARGE_CURRENT_CFG_REG rc=%d\n",
 			rc);
 
-	rc = smblib_write(chg, FLOAT_VOLTAGE_CFG_REG, 0x73);
+	rc = smblib_write(chg, FLOAT_VOLTAGE_CFG_REG, 0x78);
 	if (rc < 0)
 		dev_err(chg->dev, "Couldn't set default FLOAT_VOLTAGE_CFG_REG rc=%d\n",
 			rc);
 
 	rc = smblib_masked_write(chg, FVC_RECHARGE_THRESHOLD_CFG_REG,
-			FVC_RECHARGE_THRESHOLD_MASK, 0x58);
+			FVC_RECHARGE_THRESHOLD_MASK, 0x50);
 	if (rc < 0)
 		dev_err(chg->dev, "Couldn't set default FVC_RECHARGE_THRESHOLD_CFG_REG rc=%d\n",
 			rc);
