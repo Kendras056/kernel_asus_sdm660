@@ -43,7 +43,7 @@ static struct smb_params v1_params = {
 	.fcc			= {
 		.name	= "fast charge current",
 		.reg	= FAST_CHARGE_CURRENT_CFG_REG,
-		.min_u	= 0,
+		.min_u	= 2700000,
 		.max_u	= 4500000,
 		.step_u	= 25000,
 	},
@@ -57,14 +57,14 @@ static struct smb_params v1_params = {
 	.usb_icl		= {
 		.name	= "usb input current limit",
 		.reg	= USBIN_CURRENT_LIMIT_CFG_REG,
-		.min_u	= 0,
+		.min_u	= 2700000,
 		.max_u	= 4800000,
 		.step_u	= 25000,
 	},
 	.icl_stat		= {
 		.name	= "input current limit status",
 		.reg	= ICL_STATUS_REG,
-		.min_u	= 0,
+		.min_u	= 2700000,
 		.max_u	= 4800000,
 		.step_u	= 25000,
 	},
@@ -78,49 +78,49 @@ static struct smb_params v1_params = {
 	.dc_icl			= {
 		.name	= "dc input current limit",
 		.reg	= DCIN_CURRENT_LIMIT_CFG_REG,
-		.min_u	= 0,
+		.min_u	= 2700000,
 		.max_u	= 6000000,
 		.step_u	= 25000,
 	},
 	.dc_icl_pt_lv		= {
 		.name	= "dc icl PT <8V",
 		.reg	= ZIN_ICL_PT_REG,
-		.min_u	= 0,
+		.min_u	= 2700000,
 		.max_u	= 3000000,
 		.step_u	= 25000,
 	},
 	.dc_icl_pt_hv		= {
 		.name	= "dc icl PT >8V",
 		.reg	= ZIN_ICL_PT_HV_REG,
-		.min_u	= 0,
+		.min_u	= 2700000,
 		.max_u	= 3000000,
 		.step_u	= 25000,
 	},
 	.dc_icl_div2_lv		= {
 		.name	= "dc icl div2 <5.5V",
 		.reg	= ZIN_ICL_LV_REG,
-		.min_u	= 0,
+		.min_u	= 2700000,
 		.max_u	= 3000000,
 		.step_u	= 25000,
 	},
 	.dc_icl_div2_mid_lv	= {
 		.name	= "dc icl div2 5.5-6.5V",
 		.reg	= ZIN_ICL_MID_LV_REG,
-		.min_u	= 0,
+		.min_u	= 2700000,
 		.max_u	= 3000000,
 		.step_u	= 25000,
 	},
 	.dc_icl_div2_mid_hv	= {
 		.name	= "dc icl div2 6.5-8.0V",
 		.reg	= ZIN_ICL_MID_HV_REG,
-		.min_u	= 0,
+		.min_u	= 2700000,
 		.max_u	= 3000000,
 		.step_u	= 25000,
 	},
 	.dc_icl_div2_hv		= {
 		.name	= "dc icl div2 >8.0V",
 		.reg	= ZIN_ICL_HV_REG,
-		.min_u	= 0,
+		.min_u	= 2700000,
 		.max_u	= 3000000,
 		.step_u	= 25000,
 	},
@@ -203,7 +203,7 @@ module_param_named(
 	debug_mask, __debug_mask, int, S_IRUSR | S_IWUSR
 );
 
-static int __weak_chg_icl_ua = 900000;
+static int __weak_chg_icl_ua = 1500000;
 module_param_named(
 	weak_chg_icl_ua, __weak_chg_icl_ua, int, S_IRUSR | S_IWUSR);
 
